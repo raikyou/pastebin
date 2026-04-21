@@ -246,7 +246,10 @@ async function submit(){
       document.getElementById('copied').classList.add('show');
       setTimeout(()=>document.getElementById('copied').classList.remove('show'),2000);
     };
-    el.click();
+    navigator.clipboard.writeText(d.url).then(()=>{
+      document.getElementById('copied').classList.add('show');
+      setTimeout(()=>document.getElementById('copied').classList.remove('show'),2000);
+    });
   }catch(e){alert('Something went wrong')}
   finally{btn.disabled=false;btn.textContent='share'}
 }
