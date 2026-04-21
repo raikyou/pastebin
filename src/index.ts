@@ -133,7 +133,7 @@ textarea::placeholder{color:var(--dim)}
 input[type="password"],input[type="text"]{
   background:var(--bg);color:var(--text);
   border:1px solid var(--border);border-radius:var(--radius);
-  padding:.5rem .75rem;font-family:var(--mono);font-size:.85rem;width:180px;
+  padding:.5rem .75rem;font-family:var(--mono);font-size:.85rem;min-width:220px;flex:1;
   transition:border-color .2s;
 }
 input:focus{outline:none;border-color:var(--accent)}
@@ -181,6 +181,16 @@ button:disabled{opacity:.4;cursor:not-allowed}
 
 .back{display:inline-block;margin-top:1.5rem;font-family:var(--mono);font-size:.8rem;color:var(--dim)}
 .back:hover{color:var(--accent)}
+
+.content-header{display:flex;justify-content:space-between;align-items:center;margin-bottom:.75rem}
+.copy-btn{
+  display:inline-flex;align-items:center;gap:.35rem;
+  background:var(--bg);border:1px solid var(--border);border-radius:6px;
+  padding:.3rem .6rem;font-family:var(--mono);font-size:.7rem;color:var(--dim);
+  cursor:pointer;transition:color .15s,border-color .15s;
+}
+.copy-btn:hover{color:var(--accent);border-color:var(--accent)}
+.copy-btn svg{width:14px;height:14px}
 
 @keyframes fadeIn{from{opacity:0}to{opacity:1}}
 @keyframes slideUp{from{opacity:0;transform:translateY(12px)}to{opacity:1;transform:translateY(0)}}
@@ -280,7 +290,13 @@ async function load(pw){
   const mins=Math.floor(d.expiresIn/60);
   const hrs=Math.floor(mins/60);
   const tag=hrs>0?hrs+'h '+mins%60+'m remaining':mins+'m remaining';
-  card.innerHTML='<span class="expire-tag">'+tag+'</span><div class="content-box">'+escapeHtml(d.content)+'</div>';
+  card.innerHTML='<div class="content-header"><span class="expire-tag">'+tag+'</span><button class="copy-btn" onclick="copyContent()"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 01-2-2V4a2 2 0 012-2h9a2 2 0 012 2v1"/></svg><span id="copy-label">copy</span></button></div><div class="content-box">'+escapeHtml(d.content)+'</div>';
+  window._pasteContent=d.content;
+}
+function copyContent(){
+  navigator.clipboard.writeText(window._pasteContent);
+  const l=document.getElementById('copy-label');
+  l.textContent='copied!';setTimeout(()=>l.textContent='copy',1500);
 }
 function unlock(){load(document.getElementById('pw').value)}
 function escapeHtml(s){const d=document.createElement('div');d.textContent=s;return d.innerHTML}
